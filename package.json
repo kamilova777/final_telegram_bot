@@ -21,7 +21,8 @@
   "homepage": "https://github.com/kamilova777/final_telegram_bot#readme",
   "dependencies": {
     "dotenv": "^17.2.3",
-    "node-telegram-bot-api": "^0.66.0"
+    "mongoose": "^9.0.1",
+    "node-telegram-bot-api": "^0.63.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
