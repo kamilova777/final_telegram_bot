@@ -1,25 +1,13 @@
 import mongoose from "mongoose";
-const userSchema = new mongoose.Schema({
-    chatId: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    firstname: {
-        type: String
-    },
-    username: {
-        type: String,
-        dafault: null
-    },
-    active: {
-        type: Boolean,
-        default: true,
-    },
-    balance: {
-        type: Number,
-        default: 2000,
-    },
-});
-export const User = new mongoose.model("User", userSchema)
 
+const userSchema = new mongoose.Schema({
+  chatId: { type: String, required: true, unique: true },
+  firstname: String,
+  username: { type: String, default: null },
+  active: { type: Boolean, default: true },
+  balance: { type: Number, default: 2000 }
+});
+
+const User = mongoose.model("User", userSchema);
+
+export { User };

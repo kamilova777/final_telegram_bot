@@ -1,13 +1,9 @@
-import "./src/bot/bot.js";
 import mongoose from "mongoose";
+import "./src/bot/bot.js";
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log(`Db is connected...`);
-  })
-  .catch(() => {
-    console.log(`Error: db is not connected!`);
-  });
+  .then(() => console.log("DB connected"))
+  .catch(() => console.log("DB connection error"));
 
-console.log(`Dastur ishga tushmoqda...`); 
+console.log("Dastur ishga tushmoqda...");
