@@ -3,14 +3,14 @@ import { User } from "../../models/User.js";
 
 async function onStart(msg) {
   const chatId = msg.chat.id;
-  const firstname = msg.chat.first_name;
+  const firstName = msg.chat.first_name;
 
   let user = await User.findOne({ chatId });
 
   if (!user) {
     user = await User.create({
       chatId,
-      firstname,
+      firstName,
       username: msg.chat.username
     });
   }
@@ -20,7 +20,7 @@ async function onStart(msg) {
 
         chatId,
 
-        `👋 Assalomu alaykum, ${firstname}!
+        `👋 Assalomu alaykum, ${firstName}!
 🎓 100x Academy o‘quv markazining rasmiy botiga xush kelibsiz!
 
 Bu bot orqali siz:
