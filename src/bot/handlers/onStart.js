@@ -8,11 +8,13 @@ async function onStart(msg) {
   let user = await User.findOne({ chatId });
 
   if (!user) {
-    user = await User.create({
+    user = new User({
       chatId,
       firstName,
       username: msg.chat.username
     });
+
+    user.save();
   }
 
 
@@ -27,7 +29,7 @@ Bu bot orqali siz:
 • Kurslarimiz haqida batafsil ma’lumot olasiz
 • Kurslarga onlayn ro‘yxatdan o‘tishingiz mumkin
 • Jadval va to‘lovlar haqida ma’lumot olasiz
-    
+    +
 👇 Quyidagi menyudan kerakli bo‘limni tanlang`, {
         reply_markup: {
             keyboard: [
