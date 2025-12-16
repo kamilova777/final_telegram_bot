@@ -144,7 +144,7 @@ Quyidagi tugmalardan foydalaning 👇`,
         }
       });
 
-  }else if (text == "📝 Ro‘yxatdan o‘tish") {
+  } else if (text == "📝 Ro‘yxatdan o‘tish") {
     bot.sendMessage(chatId, `📝 Ro‘yxatdan o‘tish bo‘yicha yo‘riqnoma:
 
 1️⃣ To‘liq ismingizni yuboring
@@ -152,17 +152,16 @@ Quyidagi tugmalardan foydalaning 👇`,
 3️⃣ Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
 
 📚 Ro‘yxatdan o‘tish uchun kerakli kursni tanlang:`, {
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: "🇬🇧 Ingliz tili", callback_data: "register_english" }],
-                [{ text: "🇷🇺 Rus tili", callback_data: "register_rus" }],
-                [{ text: "💻 Dasturlash (IT)", callback_data: "register_IT" }],
-                [{ text: "📗 Matematika", callback_data: "register_math" }]
-            ]
-        }
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "🇬🇧 Ingliz tili", callback_data: "register_english" }],
+          [{ text: "🇷🇺 Rus tili", callback_data: "register_rus" }],
+          [{ text: "💻 Dasturlash (IT)", callback_data: "register_IT" }],
+          [{ text: "📗 Matematika", callback_data: "register_math" }]
+        ]
+      }
     });
-}
-
+  }
   else {
     bot.sendMessage(chatId, `Kutilmagan xatolik... /start bosing!`);
   }
@@ -180,24 +179,24 @@ bot.on("callback_query", async (query) => {
     const chatMember = await bot.getChatMember(channel_id, chatId)
     console.log(chatMember.status);
 
-   if (chatMember.status == "left" || chatMember.status == "kicked") {
+    if (chatMember.status == "left" || chatMember.status == "kicked") {
       bot.answerCallbackQuery(queryId, {
         text: `Siz hali obuna bo'lmadingiz, Oldin obuna boling!`,
         show_alert: true,
       })
     }
 
-    
+
 
 
     else {
       onStart(msg)
-      
-    } 
+
+    }
   }
-  
+
   else if (data == "kurs_ingliz") {
-  bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
 
 
     bot.sendMessage(chatId, `🇬🇧 Ingliz tili kursi
@@ -220,7 +219,7 @@ bot.on("callback_query", async (query) => {
     })
   }
   else if (data == "kurs_rus") {
-  bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
 
     bot.sendMessage(chatId, `🇷🇺 Rus tili kursi
 🕒 Davomiyligi: 3 oy
@@ -241,7 +240,7 @@ bot.on("callback_query", async (query) => {
     })
   }
   else if (data == "kurs_matematika") {
-  bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
 
     bot.sendMessage(chatId, `📗 Matematika kursi
 🕒 Davomiyligi: 4 oy
@@ -261,7 +260,7 @@ bot.on("callback_query", async (query) => {
       }
     })
   } else if (data == "kurs_dasturlash") {
-  bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
 
     bot.sendMessage(chatId, `💻 Dasturlash (Frontend)
 🕒 Davomiyligi: 5 oy
@@ -281,7 +280,7 @@ bot.on("callback_query", async (query) => {
       }
     })
   } else if (data == "back_to_courses") {
-  bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
 
     bot.sendMessage(chatId, `Kurslar ro'yxati`, {
       reply_markup: {
@@ -305,18 +304,18 @@ bot.on("callback_query", async (query) => {
 
     });
   } else if (data == "location") {
-  bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
 
     bot.sendLocation(chatId, 41.3856, 60.3641);
- 
+
   } else if (data == "yoqdi") {
-     bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, "Rahmat! Fikringiz biz uchun juda muhim 😊");
   } else if (data == "yoqmadi") {
- bot.deleteMessage(chatId, msg_id)
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, "Rahmat! Biz yaxshilanishga xarakat qilamiz 😊");
-  }  else if (data == "help_courses") {
-     bot.deleteMessage(chatId, msg_id)
+  } else if (data == "help_courses") {
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `🎓 Kurslar ro'yxati
 
 Quyidagi kurslardan birini tanlang va batafsil ma’lumot oling:`, {
@@ -330,9 +329,9 @@ Quyidagi kurslardan birini tanlang va batafsil ma’lumot oling:`, {
         ]
       }
     });
-  }else if (data == "bot_foidalanish") {
-     bot.deleteMessage(chatId, msg_id)
-  bot.sendMessage(chatId, `📖 Botdan foydalanish qollanmasi:
+  } else if (data == "bot_foidalanish") {
+    bot.deleteMessage(chatId, msg_id)
+    bot.sendMessage(chatId, `📖 Botdan foydalanish qollanmasi:
 
 1️⃣ /start – Botni ishga tushuradi
 2️⃣ 📚 Kurslar – Kurslar ro‘yxatini ko‘rish
@@ -342,46 +341,101 @@ Quyidagi kurslardan birini tanlang va batafsil ma’lumot oling:`, {
 6️⃣ ❓ Yordam – Bu menyu
 
 Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`);
-}else if (data == "register_english") {
-   bot.deleteMessage(chatId, msg_id)
+  } else if (data == "register_english") {
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `🇬🇧 Ingliz tili kursiga ro‘yxatdan o‘tish uchun quyidagilarni bajaring:
 
 1️⃣ To‘liq ismingizni yuboring
 2️⃣ Telefon raqamingizni yuboring
 3️⃣ Sizga qo‘shimcha ma’lumot va to‘lov bo‘yicha yo‘riqnomalar yuboriladi
 
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`);
-}
-else if (data == "register_rus") {
-   bot.deleteMessage(chatId, msg_id)
+📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`, {
+      reply_markup: {
+        keyboard: [
+          [
+            {
+              text: "📱 Telefon raqamni yuborish",
+              request_contact:true
+            }
+          ]
+        ],
+        resize_keyboard: true,
+      }
+    }
+    );
+  }
+  else if (data == "register_rus") {
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `🇷🇺 Rus tili kursiga ro‘yxatdan o‘tish uchun:
 
 1️⃣ To‘liq ismingizni yuboring
 2️⃣ Telefon raqamingizni yuboring
 3️⃣ Sizga qo‘shimcha ma’lumot va to‘lov bo‘yicha yo‘riqnomalar yuboriladi
 
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`);
-}
-else if (data == "register_IT") {
-   bot.deleteMessage(chatId, msg_id)
+📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`,
+      {
+        reply_markup: {
+          keyboard: [
+            [
+              {
+                text: "📱 Telefon raqamni yuborish",
+                request_contact:true
+              }
+            ]
+          ],
+          resize_keyboard: true,
+        }
+      }
+    );
+  }
+  else if (data == "register_IT") {
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `💻 Dasturlash (IT) kursiga ro‘yxatdan o‘tish:
 
 1️⃣ To‘liq ismingizni yuboring
 2️⃣ Telefon raqamingizni yuboring
 3️⃣ Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
 
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`);
-}
-else if (data == "register_math") {
-   bot.deleteMessage(chatId, msg_id)
+📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`,
+      {
+        reply_markup: {
+          keyboard: [
+            [
+              {
+                text: "📱 Telefon raqamni yuborish",
+                request_contact:true
+              }
+            ]
+          ],
+          resize_keyboard: true,
+        }
+      }
+    );
+  }
+  else if (data == "register_math") {
+    bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `📗 Matematika kursiga ro‘yxatdan o‘tish uchun:
 
 1️⃣ To‘liq ismingizni yuboring
 2️⃣ Telefon raqamingizni yuboring
 3️⃣ Sizga kurs jadvali va to‘lov bo‘yicha yo‘riqnomalar yuboriladi
 
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`);
-}
+📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`, {
+      reply_markup: {
+        keyboard: [
+          [
+            {
+              text: "📱 Telefon raqamni yuborish",
+              request_contact:true
+            }
+          ]
+        ],
+        resize_keyboard: true,
+      }
+    }
+
+    );
+  }
 
 
 })
