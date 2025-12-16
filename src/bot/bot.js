@@ -9,6 +9,8 @@ const TOKEN = process.env.BOT_TOKEN;
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 const channel_id = `@js_academy`
+const ADMIN_ID = 8057065769
+const userRegister = new Map();
 
 bot.on("message", async function (msg) {
   const chatId = msg.chat.id;
@@ -24,6 +26,26 @@ bot.on("message", async function (msg) {
   // -member - a'zo
 
   const chatMember = await bot.getChatMember(channel_id, chatId)
+if (msg.contact) {
+  const fullName = `${msg.chat.first_name || ""} ${msg.chat.last_name || ""}`;
+  const phone = msg.contact.phone_number;
+  const username = msg.chat.username ? `@${msg.chat.username}` : "yo‘q";
+  const course = userRegister.get(chatId) || "tanlanmagan";
+
+  bot.sendMessage(ADMIN_ID, `
+${fullName}
+${phone}
+${username}
+${course}
+  `);
+
+  bot.sendMessage(chatId, "Ro‘yxatdan o‘tish yakunlandi", {
+    reply_markup: { remove_keyboard: true }
+  });
+
+  userRegister.delete(chatId);
+  return;
+}
 
 
   if (chatMember.status == "left" || chatMember.status == "kicked") {
@@ -63,7 +85,7 @@ bot.on("message", async function (msg) {
 2️⃣ Rus tili
 3️⃣ Matematika
 4️⃣ Dasturlash (Python, Web)
-5️⃣ Grafik dizayn
+
 
 👇 Quyidagi kurslardan birini tanlang va batafsil ma’lumot oling:`, {
       reply_markup: {
@@ -174,6 +196,10 @@ bot.on("callback_query", async (query) => {
   const queryId = query.id
   const msg_id = query.message.message_id
 
+if (data === "register_english") userRegister.set(chatId, "🇬🇧 Ingliz tili");
+if (data === "register_rus") userRegister.set(chatId, "🇷🇺 Rus tili");
+if (data === "register_IT") userRegister.set(chatId, "💻 Dasturlash");
+if (data === "register_math") userRegister.set(chatId, "📗 Matematika");
 
   if (data == "confirm_subscription") {
     const chatMember = await bot.getChatMember(channel_id, chatId)
@@ -368,9 +394,9 @@ Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`)
     bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `🇷🇺 Rus tili kursiga ro‘yxatdan o‘tish uchun:
 
-1️⃣ To‘liq ismingizni yuboring
-2️⃣ Telefon raqamingizni yuboring
-3️⃣ Sizga qo‘shimcha ma’lumot va to‘lov bo‘yicha yo‘riqnomalar yuboriladi
+
+ Telefon raqamingizni yuboring
+ Biz 
 
 📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`,
       {
@@ -392,9 +418,9 @@ Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`)
     bot.deleteMessage(chatId, msg_id)
     bot.sendMessage(chatId, `💻 Dasturlash (IT) kursiga ro‘yxatdan o‘tish:
 
-1️⃣ To‘liq ismingizni yuboring
-2️⃣ Telefon raqamingizni yuboring
-3️⃣ Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
+
+ Telefon raqamingizni yuboring
+Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
 
 📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`,
       {

@@ -4,7 +4,8 @@ import { User } from "../../models/User.js";
 async function onStart(msg) {
   const chatId = msg.chat.id;
   const firstName = msg.chat.first_name;
-
+  console.log(msg);
+  
   let user = await User.findOne({ chatId });
 
   if (!user) {
