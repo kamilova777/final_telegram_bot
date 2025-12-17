@@ -2,15 +2,16 @@ import TelegramBot from "node-telegram-bot-api";
 import { config } from "dotenv";
 import onStart from "./handlers/onStart.js";
 import onProfil from "./handlers/onProfil.js"
-
+import { onRegister } from "./handlers/onRegister.js";
+import { User } from "../models/User.js";
 config();
 
 const TOKEN = process.env.BOT_TOKEN;
 
-const bot = new TelegramBot(TOKEN, { polling: true });
+ const bot = new TelegramBot(TOKEN, { polling: true });
 const channel_id = `@js_academy`
 const ADMIN_ID = 8057065769
-const userRegister = new Map();
+
 
 bot.on("message", async function (msg) {
   const chatId = msg.chat.id;
@@ -24,29 +25,49 @@ bot.on("message", async function (msg) {
   // -creator - yaratuvchi
   // -admin - admin
   // -member - a'zo
+ 
 
+
+
+  //Ro`yhatdan o`tish
+
+  if (text == "✍️ Ro‘yxatdan o‘tish") {
+    return onRegister(msg,bot)
+  }
+
+  let user = await User.findOne({chatId:chatId})
   const chatMember = await bot.getChatMember(channel_id, chatId)
-if (msg.contact) {
-  const fullName = `${msg.chat.first_name || ""} ${msg.chat.last_name || ""}`;
-  const phone = msg.contact.phone_number;
-  const username = msg.chat.username ? `@${msg.chat.username}` : "yo‘q";
-  const course = userRegister.get(chatId) || "tanlanmagan";
 
-  bot.sendMessage(ADMIN_ID, `
-${fullName}
-${phone}
-${username}
-${course}
-  `);
+  if (user.action == "awaiting_name"){
+    user = await User.findOneAndUpdate(
+      {chatId: chatId},
+      {action: "awaiting_phone" , name: text}
+    )
 
-  bot.sendMessage(chatId, "Ro‘yxatdan o‘tish yakunlandi", {
-    reply_markup: { remove_keyboard: true }
-  });
+    bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
+  }
+ if (user.action == "awaiting_phone"){
+    user = await User.findOneAndUpdate(
+      {chatId: chatId},
+      {action: "finish_register" , name: text}
+    )
 
-  userRegister.delete(chatId);
-  return;
-}
-
+  bot.sendMessage(chatId, "🎉")
+   bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz", {
+  reply_markup: {
+    inline_keyboard: [
+      [
+        {
+          text: "Sizning Malumotlaringiz",
+          callback_data: "foidalanuvchi_malumotlari"
+        }
+      ]
+    ]
+  }
+});
+bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 ismi: ${user.name}\n🔘 tel: ${text}`)
+return;
+  }
 
   if (chatMember.status == "left" || chatMember.status == "kicked") {
     return bot.sendMessage(
@@ -194,12 +215,7 @@ bot.on("callback_query", async (query) => {
   const firstName = msg.chat.first_name
   const data = query.data
   const queryId = query.id
-  const msg_id = query.message.message_id
-
-if (data === "register_english") userRegister.set(chatId, "🇬🇧 Ingliz tili");
-if (data === "register_rus") userRegister.set(chatId, "🇷🇺 Rus tili");
-if (data === "register_IT") userRegister.set(chatId, "💻 Dasturlash");
-if (data === "register_math") userRegister.set(chatId, "📗 Matematika");
+  const msg_id = query.message.message_id;
 
   if (data == "confirm_subscription") {
     const chatMember = await bot.getChatMember(channel_id, chatId)
@@ -461,6 +477,8 @@ Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
     }
 
     );
+  }else if (data == "foidalanuvchi_malumotlari") {
+    bot.sendMessage(chatId, `Name: ${user.name}\nPhone:${text}`)
   }
 
 
