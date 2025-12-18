@@ -1,19 +1,54 @@
 import { User } from "../../models/User.js";
+import { ADMIN_ID } from "../bot.js";
 
-export async function onRegister(msg,bot) {
-    const chatId= msg.chat.chatId
-    const text = msg.text
+export async function onRegister(msg, bot) {
+  const chatId = msg.chat.id
+  const text = msg.text
+  let user = await User.findOne({ chatId });
+  if (!user) return
 
-    let user = await User.findOne({chatId:chatId})
+  if (text == "📝 Ro‘yxatdan o‘tish") {
+    bot.sendMessage(chatId, `📝 Qaysi kursdan ro‘yxatdan o'tmoqchisiz?`, {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "🇬🇧 Ingliz tili", callback_data: "register_english" }],
+          [{ text: "🇷🇺 Rus tili", callback_data: "register_rus" }],
+          [{ text: "💻 Dasturlash (IT)", callback_data: "register_IT" }],
+          [{ text: "📗 Matematika", callback_data: "register_math" }]
+        ]
+      }
+    });
+  }
+}
+export async function register_english(msg, query, bot) {
 
-    if(!user) return
-
+  const text =msg.text
+  const chatId = msg.chat.id
+  let user = await User.findOne({ chatId });
+  if (!user) return;
+  const msg_id = query.message.message_id;
+  bot.deleteMessage(chatId, msg_id)
+  if (user.action == "awaiting_name") {
     user = await User.findOneAndUpdate(
-        {chatId: chatId},
-        {action : "Awaiting_name"}
+      { chatId: chatId },
+      { action: "awaiting_phone", phone: text }
     )
 
-    bot.sendMessage(chatId , `Iltimos, ismingizni kiriting:`)
-}
+    bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
+  }
+  if (user.action == "awaiting_phone") {
+    user = await User.findOneAndUpdate(
+      { chatId: chatId },
+      { action: "finish_register", phone: text }
+    )
 
+    bot.sendMessage(chatId, "🎉")
+    bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
+    bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+
+    bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+    return
+
+  }
+}
 

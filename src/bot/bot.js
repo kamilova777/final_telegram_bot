@@ -2,15 +2,16 @@ import TelegramBot from "node-telegram-bot-api";
 import { config } from "dotenv";
 import onStart from "./handlers/onStart.js";
 import onProfil from "./handlers/onProfil.js"
-import { onRegister } from "./handlers/onRegister.js";
+import { onRegister, register_english } from "./handlers/onRegister.js";
 import { User } from "../models/User.js";
+
 config();
 
 const TOKEN = process.env.BOT_TOKEN;
 
- const bot = new TelegramBot(TOKEN, { polling: true });
+const bot = new TelegramBot(TOKEN, { polling: true });
 const channel_id = `@js_academy`
-const ADMIN_ID = 8057065769
+export const ADMIN_ID = 8057065769
 
 
 bot.on("message", async function (msg) {
@@ -25,49 +26,30 @@ bot.on("message", async function (msg) {
   // -creator - yaratuvchi
   // -admin - admin
   // -member - a'zo
- 
+
 
 
 
   //Ro`yhatdan o`tish
 
-  if (text == "✍️ Ro‘yxatdan o‘tish") {
-    return onRegister(msg,bot)
+  if (text == "📝 Ro‘yxatdan o‘tish") {
+    return onRegister(msg, bot)
   }
 
-  let user = await User.findOne({chatId:chatId})
+  let user = await User.findOne({ chatId });
+
+  if (!user) {
+    user = await User.create({
+      chatId,
+      firstname: firstName,
+      username: msg.chat.username,
+      action: "awaiting_name"
+    });
+  }
+
   const chatMember = await bot.getChatMember(channel_id, chatId)
 
-  if (user.action == "awaiting_name"){
-    user = await User.findOneAndUpdate(
-      {chatId: chatId},
-      {action: "awaiting_phone" , name: text}
-    )
 
-    bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
-  }
- if (user.action == "awaiting_phone"){
-    user = await User.findOneAndUpdate(
-      {chatId: chatId},
-      {action: "finish_register" , name: text}
-    )
-
-  bot.sendMessage(chatId, "🎉")
-   bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz", {
-  reply_markup: {
-    inline_keyboard: [
-      [
-        {
-          text: "Sizning Malumotlaringiz",
-          callback_data: "foidalanuvchi_malumotlari"
-        }
-      ]
-    ]
-  }
-});
-bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 ismi: ${user.name}\n🔘 tel: ${text}`)
-return;
-  }
 
   if (chatMember.status == "left" || chatMember.status == "kicked") {
     return bot.sendMessage(
@@ -186,28 +168,14 @@ Quyidagi tugmalardan foydalaning 👇`,
           ]
         }
       });
-
-  } else if (text == "📝 Ro‘yxatdan o‘tish") {
-    bot.sendMessage(chatId, `📝 Ro‘yxatdan o‘tish bo‘yicha yo‘riqnoma:
-
-1️⃣ To‘liq ismingizni yuboring
-2️⃣ Telefon raqamingizni yuboring
-3️⃣ Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
-
-📚 Ro‘yxatdan o‘tish uchun kerakli kursni tanlang:`, {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "🇬🇧 Ingliz tili", callback_data: "register_english" }],
-          [{ text: "🇷🇺 Rus tili", callback_data: "register_rus" }],
-          [{ text: "💻 Dasturlash (IT)", callback_data: "register_IT" }],
-          [{ text: "📗 Matematika", callback_data: "register_math" }]
-        ]
-      }
-    });
   }
+
+
   else {
     bot.sendMessage(chatId, `Kutilmagan xatolik... /start bosing!`);
+
   }
+
 });
 bot.on("callback_query", async (query) => {
   const msg = query.message
@@ -380,105 +348,94 @@ Quyidagi kurslardan birini tanlang va batafsil ma’lumot oling:`, {
 3️⃣ 💬 Fikr bildirish – Fikringizni yuborish
 4️⃣ ℹ️ Markaz haqida – Markaz haqida ma’lumot
 5️⃣ 📝 Ro‘yxatdan o‘tish – Kurslarga yozilish
-6️⃣ ❓ Yordam – Bu menyu
+6️⃣ ❓ Yordam – Yordam menyusi
 
 Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`);
   } else if (data == "register_english") {
+    let user = await User.findOne({ chatId });
+    if (!user) return;
+
+    register_english(msg,query,bot)
+
+  } else if (data == "register_rus") {
+    let user = await User.findOne({ chatId });
+    if (!user) return;
+
     bot.deleteMessage(chatId, msg_id)
-    bot.sendMessage(chatId, `🇬🇧 Ingliz tili kursiga ro‘yxatdan o‘tish uchun quyidagilarni bajaring:
+    if (user.action == "awaiting_name") {
+      user = await User.findOneAndUpdate(
+        { chatId: chatId },
+        { action: "awaiting_phone", name: text }
+      )
 
-1️⃣ To‘liq ismingizni yuboring
-2️⃣ Telefon raqamingizni yuboring
-3️⃣ Sizga qo‘shimcha ma’lumot va to‘lov bo‘yicha yo‘riqnomalar yuboriladi
-
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`, {
-      reply_markup: {
-        keyboard: [
-          [
-            {
-              text: "📱 Telefon raqamni yuborish",
-              request_contact:true
-            }
-          ]
-        ],
-        resize_keyboard: true,
-      }
+      bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
     }
-    );
-  }
-  else if (data == "register_rus") {
-    bot.deleteMessage(chatId, msg_id)
-    bot.sendMessage(chatId, `🇷🇺 Rus tili kursiga ro‘yxatdan o‘tish uchun:
+    if (user.action == "awaiting_phone") {
+      user = await User.findOneAndUpdate(
+        { chatId: chatId },
+        { action: "finish_register", name: text }
+      )
 
+      bot.sendMessage(chatId, "🎉")
+      bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
+      bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
 
- Telefon raqamingizni yuboring
- Biz 
-
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`,
-      {
-        reply_markup: {
-          keyboard: [
-            [
-              {
-                text: "📱 Telefon raqamni yuborish",
-                request_contact:true
-              }
-            ]
-          ],
-          resize_keyboard: true,
-        }
-      }
-    );
-  }
-  else if (data == "register_IT") {
-    bot.deleteMessage(chatId, msg_id)
-    bot.sendMessage(chatId, `💻 Dasturlash (IT) kursiga ro‘yxatdan o‘tish:
-
-
- Telefon raqamingizni yuboring
-Sizga kurs jadvali va to‘lov bo‘yicha ma’lumot yuboriladi
-
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`,
-      {
-        reply_markup: {
-          keyboard: [
-            [
-              {
-                text: "📱 Telefon raqamni yuborish",
-                request_contact:true
-              }
-            ]
-          ],
-          resize_keyboard: true,
-        }
-      }
-    );
-  }
-  else if (data == "register_math") {
-    bot.deleteMessage(chatId, msg_id)
-    bot.sendMessage(chatId, `📗 Matematika kursiga ro‘yxatdan o‘tish uchun:
-
-1️⃣ To‘liq ismingizni yuboring
-2️⃣ Telefon raqamingizni yuboring
-3️⃣ Sizga kurs jadvali va to‘lov bo‘yicha yo‘riqnomalar yuboriladi
-
-📞 Savollar bo‘lsa, admin bilan bog‘laning: @komilovaa_77`, {
-      reply_markup: {
-        keyboard: [
-          [
-            {
-              text: "📱 Telefon raqamni yuborish",
-              request_contact:true
-            }
-          ]
-        ],
-        resize_keyboard: true,
-      }
+      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+      return
     }
+  } else if (data == "register_IT") {
+    let user = await User.findOne({ chatId });
+    if (!user) return;
 
-    );
-  }else if (data == "foidalanuvchi_malumotlari") {
-    bot.sendMessage(chatId, `Name: ${user.name}\nPhone:${text}`)
+    bot.deleteMessage(chatId, msg_id)
+    if (user.action == "awaiting_name") {
+      user = await User.findOneAndUpdate(
+        { chatId: chatId },
+        { action: "awaiting_phone", name: text }
+      )
+
+      bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
+    }
+    if (user.action == "awaiting_phone") {
+      user = await User.findOneAndUpdate(
+        { chatId: chatId },
+        { action: "finish_register", name: text }
+      )
+    }
+    bot.sendMessage(chatId, "🎉")
+    bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
+    bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+
+    bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+    return
+  } else if (data == "register_math") {
+    let user = await User.findOne({ chatId });
+    if (!user) return;
+
+    bot.deleteMessage(chatId, msg_id)
+    if (user.action == "awaiting_name") {
+      user = await User.findOneAndUpdate(
+        { chatId: chatId },
+        { action: "awaiting_phone", name: text }
+      )
+
+      bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
+    }
+    if (user.action == "awaiting_phone") {
+      user = await User.findOneAndUpdate(
+        { chatId: chatId },
+        { action: "finish_register", name: text }
+      )
+
+      bot.sendMessage(chatId, "🎉")
+      bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
+      bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+
+      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+      return
+
+
+    }
   }
 
 
