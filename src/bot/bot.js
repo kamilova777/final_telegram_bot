@@ -378,9 +378,9 @@ Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`)
 
       bot.sendMessage(chatId, "🎉")
       bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
-      bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+      bot.sendMessage(chatId, `🔘 Kurs: Rus tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
 
-      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Rus tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
       return
     }
   } else if (data == "register_IT") {
@@ -404,9 +404,9 @@ Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`)
     }
     bot.sendMessage(chatId, "🎉")
     bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
-    bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+    bot.sendMessage(chatId, `🔘 Kurs: Dasturlash \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
 
-    bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+    bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Dasturlash \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
     return
   } else if (data == "register_math") {
     let user = await User.findOne({ chatId });
@@ -429,9 +429,9 @@ Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`)
 
       bot.sendMessage(chatId, "🎉")
       bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
-      bot.sendMessage(chatId, `🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+      bot.sendMessage(chatId, `🔘 Kurs: Matematika \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
 
-      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Ingilis tili \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
+      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Dasturlash \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
       return
 
 
