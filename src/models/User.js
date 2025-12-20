@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, default: null },
   active: { type: Boolean, default: true },
   balance: { type: Number, default: 2000 },
-  action: {type: String,default:"awaiting_name",},
+  action: {type: String,default:"user_created",},
   name:String,
   phone:String,
 
