@@ -2,7 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import "dotenv/config";
 import onStart from "./handlers/onStart.js";
 import onProfil from "./handlers/onProfil.js"
-import { onRegister, register_english } from "./handlers/onRegister.js";
+import { onRegister, register_english, register_IT, register_rus, register_math } from "./handlers/onRegister.js";
 import { User } from "../models/User.js";
 
 
@@ -40,10 +40,10 @@ bot.on("message", async function (msg) {
   }
 
   const chatMember = await bot.getChatMember(channel_id, chatId)
+ 
 
 
-
-  if (chatMember.status == "left" || chatMember.status == "kicked") {
+ if (chatMember.status == "left" || chatMember.status == "kicked") {
     return bot.sendMessage(
       chatId,
       `Hurmatli foydalanuvchi,\nBotni ishlatishingiz uchun quyidagi kanalga obuna bo'lishingiz shart... 👇`,
@@ -68,8 +68,8 @@ bot.on("message", async function (msg) {
     )
   }
   else if (text === "/start") {
-
     return onStart(msg);
+    
   } else if (text === "/profile") {
     return onProfil(msg);
   } else if (text == "📚 Kurslar") {
@@ -188,7 +188,15 @@ Quyidagi tugmalardan foydalaning 👇`,
 
   }
 
+else if (chatId== ADMIN_ID) {
+     if ( text == "/broadcast") {
+       bot.sendMessage(ADMIN_ID, "Foidalanuvchilarga yuborish kerak bo`lgan xabarni kiriting: ")
+       const text =msg.text
+       bot.sendMessage(text)
+      
+     }
 
+  }
   else {
     bot.sendMessage(chatId, `Kutilmagan xatolik... /start bosing!`);
 
@@ -225,9 +233,7 @@ bot.on("callback_query", async (query) => {
       onStart(msg)
 
     }
-  }
-
-  else if (data == "kurs_ingliz") {
+  }else if (data == "kurs_ingliz") {
     bot.deleteMessage(chatId, msg_id)
 
 
@@ -249,8 +255,7 @@ bot.on("callback_query", async (query) => {
         ]
       }
     })
-  }
-  else if (data == "kurs_rus") {
+  }else if (data == "kurs_rus") {
     bot.deleteMessage(chatId, msg_id)
 
     bot.sendMessage(chatId, `🇷🇺 Rus tili kursi
@@ -270,8 +275,7 @@ bot.on("callback_query", async (query) => {
         ]
       }
     })
-  }
-  else if (data == "kurs_matematika") {
+  }else if (data == "kurs_matematika") {
     bot.deleteMessage(chatId, msg_id)
 
     bot.sendMessage(chatId, `📗 Matematika kursi
@@ -380,84 +384,21 @@ Inline tugmalardan foydalanib, kerakli bo‘limlarga tez o‘tishingiz mumkin.`)
     register_english(msg, query, bot)
 
   } else if (data == "register_rus") {
-    let user = await User.findOne({ chatId });
+        let user = await User.findOne({ chatId });
     if (!user) return;
 
-    bot.deleteMessage(chatId, msg_id)
-    if (user.action == "awaiting_name") {
-      user = await User.findOneAndUpdate(
-        { chatId: chatId },
-        { action: "awaiting_phone", name: text }
-      )
+    register_rus(msg, query, bot)
 
-      bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
-    }
-    if (user.action == "awaiting_phone") {
-      user = await User.findOneAndUpdate(
-        { chatId: chatId },
-        { action: "finish_register", phone: text }
-      )
-
-      bot.sendMessage(chatId, "🎉")
-      bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
-      bot.sendMessage(chatId, `🔘 Kurs: Rus tili \n🔘 ismi: ${user.name}\n🔘 tel: ${text}`)
-
-      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Rus tili \n🔘 ismi: ${user.name}\n🔘 tel: ${text}`)
-      return
-    }
   } else if (data == "register_IT") {
-    let user = await User.findOne({ chatId });
+     let user = await User.findOne({ chatId });
     if (!user) return;
 
-    bot.deleteMessage(chatId, msg_id)
-    if (user.action == "awaiting_name") {
-      user = await User.findOneAndUpdate(
-        { chatId: chatId },
-        { action: "awaiting_phone", name: text }
-      )
-
-      bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
-    }
-    if (user.action == "awaiting_phone") {
-      user = await User.findOneAndUpdate(
-        { chatId: chatId },
-        { action: "finish_register", name: text }
-      )
-    }
-    bot.sendMessage(chatId, "🎉")
-    bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
-    bot.sendMessage(chatId, `🔘 Kurs: Dasturlash \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
-
-    bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Dasturlash \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
-    return
+    register_IT(msg, query, bot)
   } else if (data == "register_math") {
-    let user = await User.findOne({ chatId });
+     let user = await User.findOne({ chatId });
     if (!user) return;
 
-    bot.deleteMessage(chatId, msg_id)
-    if (user.action == "awaiting_name") {
-      user = await User.findOneAndUpdate(
-        { chatId: chatId },
-        { action: "awaiting_phone", name: text }
-      )
-
-      bot.sendMessage(chatId, `Iltimos,telefon raqamingizni kiriting:`)
-    }
-    if (user.action == "awaiting_phone") {
-      user = await User.findOneAndUpdate(
-        { chatId: chatId },
-        { action: "finish_register", name: text }
-      )
-
-      bot.sendMessage(chatId, "🎉")
-      bot.sendMessage(chatId, "Tabriklaymiz,siz muvafaqiyatli ro`yhattan o`ttingiz");
-      bot.sendMessage(chatId, `🔘 Kurs: Matematika \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
-
-      bot.sendMessage(ADMIN_ID, `Yangi xabar 🔔 \n\n🔘 Kurs: Dasturlash \n🔘 ismi: ${user.name}\n🔘 tel: ${user.phone}`)
-      return
-
-
-    }
+    register_math(msg, query, bot)
   }
 
 

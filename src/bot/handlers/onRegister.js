@@ -40,3 +40,54 @@ export async function register_english(msg, query, bot) {
  
 }
 
+
+export async function register_IT(msg, query, bot) {
+
+  const text = msg.text
+  const chatId = msg.chat.id
+  let user = await User.findOne({ chatId });
+  if (!user) return;
+  const msg_id = query.message.message_id;
+  bot.deleteMessage(chatId, msg_id)
+
+  user = await User.findOneAndUpdate({ chatId }, { action: "awaiting_name" })
+
+  bot.sendMessage(chatId, "Ismingizni kiriting")
+
+ 
+}
+
+
+export async function register_rus(msg, query, bot) {
+
+  const text = msg.text
+  const chatId = msg.chat.id
+  let user = await User.findOne({ chatId });
+  if (!user) return;
+  const msg_id = query.message.message_id;
+  bot.deleteMessage(chatId, msg_id)
+
+  user = await User.findOneAndUpdate({ chatId }, { action: "awaiting_name" })
+
+  bot.sendMessage(chatId, "Ismingizni kiriting")
+
+ 
+}
+
+
+export async function register_math(msg, query, bot) {
+
+  const text = msg.text
+  const chatId = msg.chat.id
+  let user = await User.findOne({ chatId });
+  if (!user) return;
+  const msg_id = query.message.message_id;
+  bot.deleteMessage(chatId, msg_id)
+
+  user = await User.findOneAndUpdate({ chatId }, { action: "awaiting_name" })
+
+  bot.sendMessage(chatId, "Ismingizni kiriting")
+
+ 
+}
+
