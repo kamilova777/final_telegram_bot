@@ -188,15 +188,57 @@ Quyidagi tugmalardan foydalaning 👇`,
 
   }
 
-else if (chatId== ADMIN_ID) {
-     if ( text == "/broadcast") {
-       bot.sendMessage(ADMIN_ID, "Foidalanuvchilarga yuborish kerak bo`lgan xabarni kiriting: ")
-       const text =msg.text
-       bot.sendMessage(text)
-      
-     }
+else if (text === "/broadcast") {
+  if (chatId == ADMIN_ID) {
+    
+    await User.findOneAndUpdate(
+      { chatId: chatId },
+      { action: "awaiting_broadcast" }
+    );
 
+    bot.sendMessage(
+      ADMIN_ID, 
+      "📢 Foydalanuvchilarga yuborish kerak bo'lgan xabarni kiriting:"
+    );
   }
+}
+
+else if (user && user.action === "awaiting_broadcast" && chatId === ADMIN_ID) {
+  const broadcastMessage = text;
+  
+  if (!broadcastMessage || broadcastMessage.trim() === "") {
+    return bot.sendMessage(ADMIN_ID, "❌ Xabar matni bo'sh bo'lishi mumkin emas!");
+  }
+  
+  try {
+    const allUsers = await User.find({});
+    let sentCount = 0;
+    
+    for (const user of allUsers) {
+      try {
+        await bot.sendMessage(user.chatId, 
+          `📢 **Admin xabari:**\n\n${broadcastMessage}`
+        );
+        sentCount++;
+      } catch (error) {
+        console.log(`Xato: ${user.chatId} ga yuborilmadi`);
+      }
+    }
+    
+    await User.findOneAndUpdate(
+      { chatId: chatId },
+      { action: "menu" }
+    );
+    
+    bot.sendMessage(
+      ADMIN_ID,
+      `✅ Xabar ${sentCount}/${allUsers.length} ta foydalanuvchiga muvaffaqiyatli yuborildi!`
+    );
+    
+  } catch (error) {
+    bot.sendMessage(ADMIN_ID, `❌ Xatolik: ${error.message}`);
+  }
+}
   else {
     bot.sendMessage(chatId, `Kutilmagan xatolik... /start bosing!`);
 
